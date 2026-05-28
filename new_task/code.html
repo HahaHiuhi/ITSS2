@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Task - Deep Focus</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "secondary-fixed": "#e0e3e5",
+                        "on-secondary-fixed": "#191c1e",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "on-tertiary-fixed": "#3e0022",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#464554",
+                        "secondary": "#5c5f61",
+                        "outline-variant": "#c7c4d7",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-fixed-variant": "#8c0053",
+                        "surface-dim": "#cbdbf5",
+                        "on-secondary-container": "#626567",
+                        "surface-tint": "#494bd6",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container": "#e5eeff",
+                        "on-surface": "#0b1c30",
+                        "tertiary-fixed": "#ffd9e4",
+                        "tertiary-container": "#d23284",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#c0c1ff",
+                        "tertiary-fixed-dim": "#ffb0cd",
+                        "secondary-container": "#e0e3e5",
+                        "on-primary-container": "#fffbff",
+                        "outline": "#767586",
+                        "error": "#ba1a1a",
+                        "primary": "#4648d4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface": "#f8f9ff",
+                        "primary-fixed": "#e1e0ff",
+                        "on-primary-fixed": "#07006c",
+                        "primary-container": "#6063ee",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#dce9ff",
+                        "on-background": "#0b1c30",
+                        "tertiary": "#b10e6b",
+                        "background": "#f8f9ff",
+                        "surface-variant": "#d3e4fe",
+                        "on-secondary-fixed-variant": "#444749",
+                        "inverse-on-surface": "#eaf1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "4px",
+                        "unit": "8px",
+                        "stack-md": "12px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "24px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "container-max": "800px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-outline-variant dark:border-outline flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Deep Focus</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8D59Ho2itMajxRqtxJEYSSM2tL17e1KlZAapm_XXaMBeEEr6Gfgjh7Nh8m7ZBQ56G25vxwPsl1mVS19j3Bf4rR3c0ugFm6himW9Jzs-694OapWIawRwRub7UUBSQUUoN-jIUrAyvVqM2anuK6QCSaifrdVSaFUITS8x0TBMTUsG7Tn_PZar2j2o9YaE4WYTv-qWIyWQ9z0xSpxuM6KOVfjHJqRaHB8uxN8dFqvx6hz8wnda8FRti-grHBm99E53tLLbNvVVxSRm8"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow pt-24 pb-32 px-margin-mobile md:max-w-[800px] md:mx-auto w-full">
+<!-- New Task Title Area -->
+<section class="mb-stack-lg">
+<input autofocus="" class="w-full bg-transparent border-none p-0 focus:ring-0 font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg placeholder-on-surface-variant/40 font-bold" placeholder="New task" type="text"/>
+</section>
+<!-- Properties Section -->
+<section class="space-y-stack-md mb-stack-lg">
+<!-- Due Date -->
+<div class="flex items-center justify-between group cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<div class="flex items-center gap-stack-md text-on-surface-variant">
+<span class="material-symbols-outlined text-body-lg">calendar_today</span>
+<span class="font-body-md text-body-md">Due date</span>
+</div>
+<div class="text-on-surface-variant/60 font-body-md text-body-md">Empty</div>
+</div>
+<!-- Status -->
+<div class="flex items-center justify-between group cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<div class="flex items-center gap-stack-md text-on-surface-variant">
+<span class="material-symbols-outlined text-body-lg">progress_activity</span>
+<span class="font-body-md text-body-md">Status</span>
+</div>
+<div class="bg-secondary-container px-3 py-1 rounded-full flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<span class="font-label-md text-label-md text-on-secondary-container">Not started</span>
+</div>
+</div>
+<!-- Priority -->
+<div class="flex items-center justify-between group cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<div class="flex items-center gap-stack-md text-on-surface-variant">
+<span class="material-symbols-outlined text-body-lg">priority_high</span>
+<span class="font-body-md text-body-md">Priority</span>
+</div>
+<div class="flex items-center gap-1 bg-error-container text-on-error-container px-3 py-1 rounded-full">
+<span class="font-label-md text-label-md">High</span>
+</div>
+</div>
+<!-- Category/Tags -->
+<div class="flex items-center justify-between group cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<div class="flex items-center gap-stack-md text-on-surface-variant">
+<span class="material-symbols-outlined text-body-lg">sell</span>
+<span class="font-body-md text-body-md">Type</span>
+</div>
+<div class="flex gap-2">
+<span class="bg-surface-container-highest px-3 py-1 rounded-lg font-label-md text-label-md text-on-surface">Work</span>
+</div>
+</div>
+<!-- Assignee -->
+<div class="flex items-center justify-between group cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<div class="flex items-center gap-stack-md text-on-surface-variant">
+<span class="material-symbols-outlined text-body-lg">group</span>
+<span class="font-body-md text-body-md">Assignee</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container/20 flex items-center justify-center text-primary text-[10px] font-bold">TK</div>
+<span class="font-body-md text-body-md text-on-surface">Tahm Kench</span>
+</div>
+</div>
+<!-- Add Property Button -->
+<button class="flex items-center gap-stack-md text-on-surface-variant/60 hover:text-primary p-2 transition-colors">
+<span class="material-symbols-outlined text-body-lg">add</span>
+<span class="font-body-md text-body-md">Add a property</span>
+</button>
+</section>
+<hr class="border-outline-variant mb-stack-lg"/>
+<!-- Rich Text & Attachments Area -->
+<section class="space-y-stack-lg">
+<!-- Content Editor -->
+<div class="min-h-[120px]">
+<textarea class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg placeholder-on-surface-variant/40 resize-none" placeholder="Start typing description or use / for commands..." rows="4"></textarea>
+</div>
+<!-- Attachments Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Image Attachment -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group relative">
+<img class="w-full h-32 object-cover" data-alt="A clean, minimalist digital abstract artwork with soft purple and blue gradients, evoking a sense of calm focus and modern technological design. High-key lighting highlights smooth surfaces and flowing geometric shapes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_2V7qeYkBCl9faGCyEObuKPfgzhfmpZu4pfW9Ab8rcAYqPZBkjT0ETeKhtsY1ujfycIzzlhKxTTmCxhmfxMffXwGOG8cpYv4mwJmWznEEaQosM0oLlgl4G0gMkkmkIr32dzaQNOKwSVQXacZarEktfWv0jKOiTNtsYrelS5k44SeaqGJbRQkrc5QVc8qmucHY9jPooZig43YUe796sKCPgliCnrHbgl27b4-xnbWiXXbmX0h-9CLdtknE-KrnMQRo5DLr8NZ8uPQ"/>
+<div class="p-stack-md flex justify-between items-center">
+<span class="font-label-md text-label-md truncate">Project_moodboard.png</span>
+<button class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-body-md">close</span></button>
+</div>
+</div>
+<!-- File Attachment -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex items-center gap-stack-md group">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-grow">
+<div class="font-label-md text-label-md text-on-surface">Design_System_V2.pdf</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant/60">2.4 MB</div>
+</div>
+<button class="text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-body-md">download</span></button>
+</div>
+</div>
+<!-- Mention/Collaborators Area -->
+<div class="flex flex-wrap gap-2 items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-body-md">alternate_email</span>
+<span class="font-body-md text-body-md">Mentioned:</span>
+<div class="flex -space-x-2">
+<img alt="Team member" class="w-6 h-6 rounded-full border-2 border-background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1SGuuqKPtXRKC7pkLTHx_2lE19UR6SPTUX_UwUPhAJOJOoKcxrff6YfpvnNJk7biewScsnCKXEXo8no1K4Uad1Fhtm6cuMTQQ9nUwet0RAzRWau0mHbqLAzRqb_uNdQkXFd-2Wa8uOoAgq1MAZ5uHYB2SbLOtT4tBa8lPaWsQkYbPc1nwCQaPiQCA15n4ueZsiTHTPOODhIoCx-EkQ5MWdLUKe5sXZxit7WYgqK4HvQFhHtbOhXu52vvWqDpz_pefcdpkZa2ws5I"/>
+<img alt="Team member" class="w-6 h-6 rounded-full border-2 border-background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbMyt28xowMOhz3B_0ZmMST3N29bX7qgxqENfKNqOrzkIHP1lqN1bVzojylP87Ct9tc553wt7Mx8RjkhpsDSH6rd5WoDmMWFQQVmyyBfnEGZC7FPdUEggD_q_cvC-TwJJK13DiBwAg1VZKbqih_TZNH3VysAdVZDfQddb0Qn_7s4rRerCC5fSxf3ipIOGuTqTB7SRTgyBvxheHSLgH4FXMHzUBUJmH7lN4Z6-XpIg0lEiV9E99PJSn_DWdQvKjuZac7RPBMbEmRB8"/>
+</div>
+<button class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined text-[14px]">add</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Bottom Action Bar (Floating Logic) -->
+<div class="fixed bottom-24 right-margin-mobile z-50">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-lg border-t border-outline-variant dark:border-outline shadow-md flex justify-around items-center h-20 pb-safe px-4">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-sm text-label-sm">Agent</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary-container/20 rounded-full px-4 py-1 transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-sm text-label-sm">Create</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Statistics</span>
+</a>
+</nav>
+</body></html>

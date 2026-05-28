@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Deep Focus - AI Agent</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#3e0022",
+                        "primary": "#4648d4",
+                        "on-secondary-fixed-variant": "#444749",
+                        "secondary": "#5c5f61",
+                        "primary-container": "#6063ee",
+                        "on-secondary-fixed": "#191c1e",
+                        "on-secondary-container": "#626567",
+                        "on-background": "#0b1c30",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#494bd6",
+                        "outline": "#767586",
+                        "background": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "tertiary-fixed-dim": "#ffb0cd",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "tertiary": "#b10e6b",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary-container": "#d23284",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-container": "#e0e3e5",
+                        "surface": "#f8f9ff",
+                        "on-tertiary-fixed-variant": "#8c0053",
+                        "on-primary-container": "#fffbff",
+                        "on-surface": "#0b1c30",
+                        "on-primary-fixed": "#07006c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary-fixed": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffd9e4",
+                        "outline-variant": "#c7c4d7",
+                        "surface-container-low": "#eff4ff",
+                        "inverse-surface": "#213145",
+                        "on-surface-variant": "#464554",
+                        "inverse-primary": "#c0c1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "margin-desktop": "40px",
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "stack-md": "12px",
+                        "stack-sm": "4px",
+                        "gutter": "24px",
+                        "container-max": "800px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chat-container {
+            height: calc(100vh - 64px - 80px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface w-full top-0 sticky border-b border-outline-variant dark:border-outline z-50">
+<div class="flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-secondary-container/50 transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Deep Focus</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User Avatar" data-alt="A clean, professional portrait of a modern office worker in a minimalist setting. The lighting is soft and high-key, emphasizing a light-mode aesthetic. The color palette consists of soft blues and crisp whites, reflecting a corporate yet approachable personality. The background is a blurred, bright office interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqqZ2ROtx5bvXIkbsCsfAch3LKj9z8DUxEfNAvDrXJLRg5eGvaRBLPpjO32Qdi_67E3MAuQNkux6IhYpkUlQ7GzEOcwaiiP8iAZ63Fz7g96-IH7lTkI4XvB978j3-C2BMGLaUZWJEBgYjEV_jR-Q78i3GwlqK9DRz3dGHdYeeRvVZFVTM9WKPFojNE23OKJDJXXhaVAadKesbQXMveO7Bloo8fhItk0awUp4DRn62aTjcSozjfPndjTI8V78FALyOiU17o8uje4tw"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content: AI Chat Interface -->
+<main class="max-w-container-max mx-auto chat-container flex flex-col px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Message History -->
+<div class="flex-1 overflow-y-auto space-y-stack-lg pb-stack-lg scrollbar-hide">
+<!-- AI Message -->
+<div class="flex items-start gap-stack-md max-w-[85%]">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-xl rounded-tl-none shadow-sm">
+<p class="font-body-md text-body-md text-on-surface">Good morning! I'm your Deep Focus assistant. I've analyzed your schedule for today.</p>
+<p class="font-body-md text-body-md text-on-surface mt-2">You have 3 high-priority tasks and 2 overdue items from yesterday. How can I help you organize your flow today?</p>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-start gap-stack-md flex-row-reverse max-w-[85%] ml-auto">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center flex-shrink-0 overflow-hidden border border-outline-variant">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA05C9C_zGQojRcIa-bgnK32I1s3WoxQ1s5SFrQeSVm5TWJVScdiH7vvccCEtkKzyqrRjHt0CbI9es8uTtOdd-BlNvXhEZi3S-m9x7Vrfqc7rS8PVcXSw96KzG0CxXBH0fdSkNHykfNGo52tdXSFDjZZNpeNzcD86VcNVu6uR90Yj6PG23PV_EI3jZ7UQugUeP5lG_hyhBSAEZpdCbeemPrvlI4HI1lnwJB-lDafpqmSgaGwgduZAAMqEF0e6a-bsVjjiFoMw5VQtQ"/>
+</div>
+<div class="bg-primary text-on-primary p-4 rounded-xl rounded-tr-none shadow-sm">
+<p class="font-body-md text-body-md">Can you show me what's most urgent for this morning?</p>
+</div>
+</div>
+<!-- AI Message (Response) -->
+<div class="flex items-start gap-stack-md max-w-[90%]">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-xl rounded-tl-none shadow-sm w-full">
+<p class="font-body-md text-body-md text-on-surface mb-stack-md">Based on your "Deep Work" goals, here are your top 3 priorities:</p>
+<div class="space-y-stack-sm">
+<div class="flex items-center gap-3 p-3 bg-background rounded-lg border border-outline-variant hover:border-primary transition-colors cursor-pointer group">
+<div class="w-5 h-5 rounded-full border-2 border-primary flex-shrink-0"></div>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Q3 Budget Proposal</span>
+<div class="flex gap-2 mt-1">
+<span class="bg-error-container text-on-error-container text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">High</span>
+<span class="text-on-surface-variant text-[11px]">Due today, 11:00 AM</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-background rounded-lg border border-outline-variant hover:border-primary transition-colors cursor-pointer group">
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant flex-shrink-0"></div>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Review Engineering Specs</span>
+<div class="flex gap-2 mt-1">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Medium</span>
+<span class="text-on-surface-variant text-[11px]">Due today, 2:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Input Area -->
+<div class="mt-auto space-y-stack-md">
+<!-- Quick Action Chips -->
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-low border border-outline-variant rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-primary-container/10 hover:text-primary transition-all active:scale-95">
+                    Create a work task
+                </button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-low border border-outline-variant rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-primary-container/10 hover:text-primary transition-all active:scale-95">
+                    Reschedule overdue tasks
+                </button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-low border border-outline-variant rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-primary-container/10 hover:text-primary transition-all active:scale-95">
+                    Show my priorities
+                </button>
+</div>
+<!-- Input Box -->
+<div class="relative flex items-center bg-surface-container-lowest border border-outline-variant rounded-2xl p-2 shadow-sm focus-within:border-primary transition-colors">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 px-2 font-body-md text-body-md text-on-surface placeholder:text-outline" placeholder="Ask anything about your tasks..." type="text"/>
+<button class="p-2 bg-primary text-on-primary rounded-xl active:scale-90 duration-200 transition-all">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-margin-mobile bg-surface/90 backdrop-blur-md border-t border-outline-variant z-50">
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:text-primary-container transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-md text-label-md">Agent</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-primary-container transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Create</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-primary-container transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-md text-label-md">Statistics</span>
+</a>
+</nav>
+<!-- Spacer for fixed BottomNav -->
+<div class="h-20"></div>
+</body></html>
