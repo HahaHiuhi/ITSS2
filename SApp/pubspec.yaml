@@ -1,0 +1,37 @@
+name: sapp
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  image_picker: ^1.1.2
+  file_picker: ^10.3.2
+
+  # State management
+  provider: ^6.1.5
+
+  # Date formatting
+  intl: ^0.20.2
+
+  # Supabase
+  supabase_flutter: ^2.9.1
+
+  # UI icons (optional but common)
+  cupertino_icons: ^1.0.8
+
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
