@@ -14,6 +14,27 @@ class HomeScreen extends StatelessWidget {
     final tasks = service.tasksForSelectedDay;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tasks'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.local_fire_department,
+                  color: Colors.orange,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '3',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
         onPressed: () async {
