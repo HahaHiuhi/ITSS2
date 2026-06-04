@@ -28130,7 +28130,7 @@ s=q}for(;;)switch(s){case 0:if($.Z==null)A.aEQ()
 $.Z.toString
 q=3
 s=6
-return A.o(A.ama("'sb_publishable_KdgXCHBKfVlEUIa2JOafyg_ne6tyVg6'","'https://gvpuoyeubybwdhywmlup.supabase.co'"),$async$aC1)
+return A.o(A.ama("sb_publishable_KdgXCHBKfVlEUIa2JOafyg_ne6tyVg6","https://gvpuoyeubybwdhywmlup.supabase.co"),$async$aC1)
 case 6:q=1
 s=5
 break
