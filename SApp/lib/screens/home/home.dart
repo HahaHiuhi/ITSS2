@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sapp/screens/home/widgets/home_widgets.dart';
-import 'package:sapp/screens/tasks/task_detail_test.dart';
-import 'package:sapp/services/supabase_service.dart';
+import 'package:sapp/screens/tasks/task_detail.dart';
+import 'package:sapp/services/task_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final service = context.watch<SupabaseService>();
+    final service = context.watch<TaskService>();
     final tasks = service.tasksForSelectedDay;
 
     return Scaffold(
@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
 
           if (context.mounted) {
             await context
-                .read<SupabaseService>()
+                .read<TaskService>()
                 .fetchTasks();
           }
         },
@@ -57,7 +57,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           CalendarDaysRow(
             onDateSelected: (date) {
-              context.read<SupabaseService>().selectDate(date);
+              context.read<TaskService>().selectDate(date);
             },
           ),
           Expanded(
@@ -79,7 +79,7 @@ class HomeScreen extends StatelessWidget {
 
                 if (context.mounted) {
                   await context
-                      .read<SupabaseService>()
+                      .read<TaskService>()
                       .fetchTasks();
                 }
               },
