@@ -11,6 +11,7 @@ import 'screens/profile/profile.dart';
 import 'services/auth_service.dart';
 import 'services/task_service.dart';
 import 'services/setting_provider.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,9 @@ class AppProviders extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => SettingsService()
             ..initialize(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => NotificationService(),
         ),
       ],
       child: const App(),
@@ -176,6 +180,42 @@ class _MainNavigationState
     ScheduleScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final auth = context.read<AuthService>();
+      final tasks = context.read<TaskService>();
+      
+      if (auth.isAuthenticated) {
+        await auth.fetchProfile();
+        if (auth.profile != null) {
+          final now = DateTime.now();
+          final weekday = now.weekday;
+          final startOfWeek = DateTime(
+            now.year,
+            now.month,
+            now.day,
+          ).subtract(Duration(days: weekday));
+          
+          tasks.sleepSchedules = generateSleepSchedules(
+            startOfWeek,
+            8,
+            DateTime(
+              now.year,
+              now.month,
+              now.day,
+              auth.profile!.bedtime.hour,
+              auth.profile!.bedtime.minute,
+            ),
+            auth.profile!.sleepHours,
+          );
+        }
+        await tasks.fetchTasks(rebuild: true);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

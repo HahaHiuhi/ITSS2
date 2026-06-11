@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:sapp/screens/home/widgets/home_widgets.dart';
 import 'package:sapp/screens/tasks/task_detail.dart';
 import 'package:sapp/services/task_service.dart';
+import 'package:sapp/services/notification_service.dart';
+import 'package:sapp/screens/notifications/notification_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -17,8 +19,54 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Tasks'),
         actions: [
+          Consumer<NotificationService>(
+            builder: (context, notifService, _) {
+              final unread = notifService.unreadCount;
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_none_outlined, size: 28),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  if (unread > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '$unread',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 16, left: 8),
             child: Row(
               children: [
                 const Icon(

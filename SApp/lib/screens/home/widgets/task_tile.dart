@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sapp/models/task.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../../services/task_service.dart';
 class TaskTile extends StatelessWidget {
   final Task item;
   final VoidCallback? onTap;
@@ -35,26 +37,19 @@ class TaskTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             /// CHECKBOX
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: item.isComplete
-                    ? const Color(0xff4B46E5)
-                    : Colors.transparent,
-                border: Border.all(
-                  color: const Color(0xff4B46E5),
-                  width: 2,
-                ),
+            IconButton(
+              icon: Icon(
+                item.isComplete
+                    ? Icons.check_circle
+                    : Icons.radio_button_unchecked,
+                color: const Color(0xff4B46E5),
+                size: 30,
               ),
-              child: item.isComplete
-                  ? const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 20,
-              )
-                  : null,
+              onPressed: () {
+                if (item.id != null) {
+                  context.read<TaskService>().toggleTaskCompletion(item.id!, !item.isComplete);
+                }
+              },
             ),
 
             const SizedBox(width: 16),

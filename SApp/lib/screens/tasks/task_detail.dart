@@ -368,8 +368,49 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>  {
                 title: Text(a.name),
               );
             }),
+            const SizedBox(height: 20),
+            if (isEditMode) ...[
+              OutlinedButton.icon(
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Delete Task'),
+                      content: const Text('Are you sure you want to delete this task?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirm == true && mounted) {
+                    await context.read<TaskService>().deleteTask(widget.task!.id!);
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                label: const Text('Delete', style: TextStyle(color: Colors.red)),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
             FilledButton(
               onPressed: _saveTask,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
               child: Text(
                 isEditMode
                     ? 'Save Changes'
