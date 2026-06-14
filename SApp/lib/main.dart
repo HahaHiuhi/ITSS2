@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sapp/screens/schedule/schedule.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'models/notification.dart';
 
 import 'models/schedule.dart';
 import 'screens/auth/auth.dart';
@@ -174,6 +176,8 @@ class MainNavigation
 class _MainNavigationState
     extends State<MainNavigation> {
   int _currentIndex = 0;
+  Timer? _deadlineTimer;
+  final Set<int> _warnedTaskIds = {};
 
   static const _screens = [
     HomeScreen(),
@@ -215,6 +219,39 @@ class _MainNavigationState
         await tasks.fetchTasks(rebuild: true);
       }
     });
+
+    _startDeadlineTimer();
+  }
+
+  void _startDeadlineTimer() {
+    _deadlineTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (!mounted) return;
+
+      final taskService = context.read<TaskService>();
+      final notifService = context.read<NotificationService>();
+      final now = DateTime.now();
+
+      for (final task in taskService.tasks) {
+        if (!task.isComplete && task.id != null && !_warnedTaskIds.contains(task.id!)) {
+          final difference = task.deadline.difference(now);
+          if (difference.inSeconds > 0 && difference.inMinutes <= 15) {
+            _warnedTaskIds.add(task.id!);
+            notifService.addLocalNotification(
+              title: 'Task Deadline Approaching! ⚠️',
+              content: 'Your task "${task.name}" is due in ${difference.inMinutes + 1} minutes. Make sure to complete it soon!',
+              category: NotificationCategory.urgent,
+              senderName: 'Lumina Assistant',
+            );
+          }
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _deadlineTimer?.cancel();
+    super.dispose();
   }
 
   @override

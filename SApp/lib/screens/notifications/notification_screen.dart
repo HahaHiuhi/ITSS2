@@ -12,7 +12,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  NotificationCategory _selectedCategory = NotificationCategory.tatCa;
+  NotificationCategory _selectedCategory = NotificationCategory.all;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -26,10 +26,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     final service = context.watch<NotificationService>();
     final notifications = service.notifications;
+    final totalCount = notifications.length;
+    final unreadCount = service.unreadCount;
+    final urgentCount = notifications.where((n) => n.category == NotificationCategory.urgent && !n.isRead).length;
 
     // Filter by category
     List<AppNotification> filteredList = notifications;
-    if (_selectedCategory != NotificationCategory.tatCa) {
+    if (_selectedCategory != NotificationCategory.all) {
       filteredList = filteredList.where((n) => n.category == _selectedCategory).toList();
     }
 
@@ -45,7 +48,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       backgroundColor: const Color(0xFFF8F9FF),
       appBar: AppBar(
         title: const Text(
-          'Bảng Thông Báo',
+          'Notifications',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Color(0xFF0B1C30),
@@ -59,13 +62,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 service.markAllAsRead();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Đã đánh dấu tất cả là đã đọc'),
+                    content: Text('Marked all as read'),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               },
               icon: const Icon(Icons.done_all, size: 18),
-              label: const Text('Đọc tất cả'),
+              label: const Text('Read all'),
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF3525CD),
               ),
@@ -83,7 +86,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
+                    color: Colors.black.withOpacity(0.03),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -97,7 +100,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Tìm kiếm thông báo...',
+                  hintText: 'Search notifications...',
                   hintStyle: TextStyle(color: Colors.grey.shade400),
                   prefixIcon: const Icon(Icons.search, color: Color(0xFF3525CD)),
                   suffixIcon: _searchQuery.isNotEmpty
@@ -116,6 +119,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
             ),
+          ),
+
+          // Lumina Briefing Card (Creative Element)
+          NotificationBriefCard(
+            totalCount: totalCount,
+            unreadCount: unreadCount,
+            urgentCount: urgentCount,
           ),
 
           // Category Chips
@@ -185,7 +195,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF3525CD).withValues(alpha: 0.05),
+              color: const Color(0xFF3525CD).withOpacity(0.05),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -196,7 +206,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Không có thông báo nào',
+            'No notifications',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -206,8 +216,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
           const SizedBox(height: 8),
           Text(
             _searchQuery.isNotEmpty
-                ? 'Không tìm thấy kết quả phù hợp cho "$_searchQuery"'
-                : 'Chúng tôi sẽ thông báo cho bạn khi có tin mới.',
+                ? 'No matching results found for "$_searchQuery"'
+                : 'We will notify you when there is something new.',
             style: const TextStyle(
               color: Color(0xFF5A5F68),
             ),
@@ -239,12 +249,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         service.deleteNotification(item.id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Đã xóa thông báo'),
+            content: const Text('Notification deleted'),
             action: SnackBarAction(
-              label: 'Hoàn tác',
+              label: 'Undo',
               textColor: Colors.yellow,
               onPressed: () {
-                // Hoàn tác hành động nếu cần thiết
+                // Undo action can be wired if local restore is supported
               },
             ),
             behavior: SnackBarBehavior.floating,
@@ -254,15 +264,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
         elevation: item.isRead ? 0 : 3,
-        shadowColor: const Color(0xFF3525CD).withValues(alpha: 0.12),
+        shadowColor: const Color(0xFF3525CD).withOpacity(0.12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: item.isRead ? Colors.grey.shade100 : const Color(0xFF3525CD).withValues(alpha: 0.1),
+            color: item.isRead ? Colors.grey.shade100 : const Color(0xFF3525CD).withOpacity(0.1),
             width: 1.5,
           ),
         ),
-        color: item.isRead ? Colors.white : const Color(0xFFECEBFF).withValues(alpha: 0.4),
+        color: item.isRead ? Colors.white : const Color(0xFFECEBFF).withOpacity(0.4),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
@@ -279,7 +289,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   children: [
                     CircleAvatar(
                       radius: 22,
-                      backgroundColor: categoryColor.withValues(alpha: 0.1),
+                      backgroundColor: categoryColor.withOpacity(0.1),
                       child: Text(
                         item.senderName.isNotEmpty ? item.senderName[0].toUpperCase() : 'H',
                         style: TextStyle(
@@ -309,68 +319,68 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 // Details
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: categoryColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              _getCategoryName(item.category),
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: categoryColor,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            formattedTime,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        item.title,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
-                          color: const Color(0xFF0B1C30),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item.content,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey.shade600,
-                          height: 1.4,
-                        ),
-                      ),
-                      if (item.actionLabel != null) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          item.actionLabel!,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF3525CD),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                         children: [
+                           Container(
+                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                             decoration: BoxDecoration(
+                               color: categoryColor.withOpacity(0.1),
+                               borderRadius: BorderRadius.circular(12),
+                             ),
+                             child: Text(
+                               _getCategoryName(item.category).toUpperCase(),
+                               style: TextStyle(
+                                 fontSize: 10,
+                                 fontWeight: FontWeight.bold,
+                                 color: categoryColor,
+                               ),
+                             ),
+                           ),
+                           Text(
+                             formattedTime,
+                             style: TextStyle(
+                               fontSize: 12,
+                               color: Colors.grey.shade500,
+                             ),
+                           ),
+                         ],
+                       ),
+                       const SizedBox(height: 8),
+                       Text(
+                         item.title,
+                         style: TextStyle(
+                           fontSize: 15,
+                           fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
+                           color: const Color(0xFF0B1C30),
+                         ),
+                       ),
+                       const SizedBox(height: 4),
+                       Text(
+                         item.content,
+                         maxLines: 2,
+                         overflow: TextOverflow.ellipsis,
+                         style: TextStyle(
+                           fontSize: 13,
+                           color: Colors.grey.shade600,
+                           height: 1.4,
+                         ),
+                       ),
+                       if (item.actionLabel != null) ...[
+                         const SizedBox(height: 8),
+                         Text(
+                           item.actionLabel!,
+                           style: const TextStyle(
+                             fontSize: 13,
+                             fontWeight: FontWeight.bold,
+                             color: Color(0xFF3525CD),
+                           ),
+                         ),
+                       ],
+                     ],
+                   ),
                 ),
               ],
             ),
@@ -417,11 +427,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: categoryColor.withValues(alpha: 0.1),
+                      color: categoryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      _getCategoryName(item.category),
+                      _getCategoryName(item.category).toUpperCase(),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -450,7 +460,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Gửi bởi: ${item.senderName}',
+                'Sent by: ${item.senderName}',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -476,7 +486,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         service.deleteNotification(item.id);
                       },
                       icon: const Icon(Icons.delete_outline),
-                      label: const Text('Xóa thông báo'),
+                      label: const Text('Delete Notification'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.red.shade400,
                         side: BorderSide(color: Colors.red.shade200),
@@ -501,7 +511,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Đóng'),
+                      child: const Text('Close'),
                     ),
                   ),
                 ],
@@ -516,28 +526,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   String _getCategoryName(NotificationCategory category) {
     switch (category) {
-      case NotificationCategory.tatCa:
-        return 'Tất cả';
-      case NotificationCategory.khanCap:
-        return 'Khẩn cấp';
-      case NotificationCategory.heThong:
-        return 'Hệ thống';
-      case NotificationCategory.congViec:
-        return 'Công việc';
-      case NotificationCategory.tinTuc:
-        return 'Tin tức';
+      case NotificationCategory.all:
+        return 'All';
+      case NotificationCategory.urgent:
+        return 'Urgent';
+      case NotificationCategory.system:
+        return 'System';
+      case NotificationCategory.task:
+        return 'Task';
+      case NotificationCategory.news:
+        return 'News';
     }
   }
 
   Color _getCategoryColor(NotificationCategory category) {
     switch (category) {
-      case NotificationCategory.khanCap:
+      case NotificationCategory.urgent:
         return Colors.redAccent.shade400;
-      case NotificationCategory.heThong:
+      case NotificationCategory.system:
         return Colors.blue.shade600;
-      case NotificationCategory.congViec:
+      case NotificationCategory.task:
         return Colors.orange.shade700;
-      case NotificationCategory.tinTuc:
+      case NotificationCategory.news:
         return const Color(0xFF3525CD);
       default:
         return Colors.grey;
@@ -549,11 +559,136 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final difference = now.difference(dt);
 
     if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} phút trước';
+      return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
-      return '${difference.inHours} giờ trước';
+      return '${difference.inHours}h ago';
     } else {
       return DateFormat('dd/MM').format(dt);
     }
+  }
+}
+
+class NotificationBriefCard extends StatelessWidget {
+  final int totalCount;
+  final int unreadCount;
+  final int urgentCount;
+
+  const NotificationBriefCard({
+    super.key,
+    required this.totalCount,
+    required this.unreadCount,
+    required this.urgentCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    String title = "Good day!";
+    String message = "You're all caught up. No unread notifications.";
+
+    if (unreadCount > 0) {
+      title = "Inbox Review";
+      if (urgentCount > 0) {
+        message = "You have $unreadCount unread notifications, including $urgentCount urgent updates.";
+      } else {
+        message = "You have $unreadCount unread notifications waiting for your review.";
+      }
+    }
+
+    final readPercent = totalCount == 0 ? 1.0 : (totalCount - unreadCount) / totalCount;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xff4B46E5),
+            Color(0xff6C63FF),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xff4B46E5).withOpacity(0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Colors.amberAccent,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      title.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Lumina Briefing',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  value: readPercent,
+                  backgroundColor: Colors.white.withOpacity(0.15),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 4.5,
+                ),
+              ),
+              Text(
+                "${(readPercent * 100).round()}%",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

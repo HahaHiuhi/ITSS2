@@ -1,9 +1,9 @@
 enum NotificationCategory {
-  tatCa,
-  khanCap,
-  heThong,
-  congViec,
-  tinTuc,
+  all,
+  urgent,
+  system,
+  task,
+  news,
 }
 
 class AppNotification {
@@ -58,20 +58,20 @@ class AppNotification {
     switch (json['category'] as String?) {
       case 'urgent':
       case 'khanCap':
-        cat = NotificationCategory.khanCap;
+        cat = NotificationCategory.urgent;
         break;
       case 'system':
       case 'heThong':
-        cat = NotificationCategory.heThong;
+        cat = NotificationCategory.system;
         break;
       case 'task':
       case 'congViec':
-        cat = NotificationCategory.congViec;
+        cat = NotificationCategory.task;
         break;
       case 'news':
       case 'tinTuc':
       default:
-        cat = NotificationCategory.tinTuc;
+        cat = NotificationCategory.news;
         break;
     }
 
@@ -84,7 +84,7 @@ class AppNotification {
           ? DateTime.parse(json['timestamp'])
           : DateTime.now(),
       isRead: json['is_read'] ?? false,
-      senderName: json['sender_name'] ?? 'Hệ thống',
+      senderName: json['sender_name'] ?? 'System',
       senderAvatar: json['sender_avatar'],
       actionLabel: json['action_label'],
     );
@@ -93,18 +93,18 @@ class AppNotification {
   Map<String, dynamic> toJson() {
     String catString;
     switch (category) {
-      case NotificationCategory.khanCap:
-        catString = 'khanCap';
+      case NotificationCategory.urgent:
+        catString = 'urgent';
         break;
-      case NotificationCategory.heThong:
-        catString = 'heThong';
+      case NotificationCategory.system:
+        catString = 'system';
         break;
-      case NotificationCategory.congViec:
-        catString = 'congViec';
+      case NotificationCategory.task:
+        catString = 'task';
         break;
-      case NotificationCategory.tinTuc:
+      case NotificationCategory.news:
       default:
-        catString = 'tinTuc';
+        catString = 'news';
         break;
     }
 

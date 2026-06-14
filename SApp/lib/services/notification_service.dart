@@ -23,53 +23,75 @@ class NotificationService extends ChangeNotifier {
     _notifications = [
       AppNotification(
         id: 'mock-1',
-        title: 'Cập nhật hệ thống khẩn cấp 🚨',
-        content: 'Hệ thống sẽ tiến hành bảo trì định kỳ vào lúc 23:00 tối nay để tối ưu hóa hiệu suất lập lịch công việc. Vui lòng lưu các thay đổi của bạn trước thời gian này.',
-        category: NotificationCategory.khanCap,
+        title: 'Urgent System Maintenance 🚨',
+        content: 'The system will undergo scheduled maintenance at 23:00 tonight to optimize task scheduling algorithms. Please save your progress before then.',
+        category: NotificationCategory.urgent,
         timestamp: now.subtract(const Duration(minutes: 15)),
         isRead: false,
-        senderName: 'Quản trị viên',
-        actionLabel: 'Xem chi tiết',
+        senderName: 'Administrator',
+        actionLabel: 'View Details',
       ),
       AppNotification(
         id: 'mock-2',
-        title: 'Hạn chót công việc sắp đến ⏰',
-        content: 'Bạn có công việc "Hoàn thành báo cáo ITSS" sắp đến hạn hoàn thành trong 2 giờ tới. Hãy tập trung hoàn thành đúng tiến độ.',
-        category: NotificationCategory.congViec,
+        title: 'Upcoming Task Deadline ⏰',
+        content: 'Your task "Complete ITSS Report" is due in 2 hours. Keep up the good work to finish on schedule.',
+        category: NotificationCategory.task,
         timestamp: now.subtract(const Duration(hours: 1)),
         isRead: false,
-        senderName: 'Lumina Trợ lý',
-        actionLabel: 'Xem công việc',
+        senderName: 'Lumina Assistant',
+        actionLabel: 'View Task',
       ),
       AppNotification(
         id: 'mock-3',
-        title: 'Chúc mừng! Bạn đạt Streak mới 🎉',
-        content: 'Tuyệt vời! Bạn đã duy trì thói quen hoàn thành công việc liên tục trong 3 ngày qua. Tiếp tục phát huy tinh thần này nhé!',
-        category: NotificationCategory.tinTuc,
+        title: 'New Streak Milestone Reached! 🎉',
+        content: 'Fantastic! You have successfully completed tasks for 3 consecutive days. Keep this brilliant streak alive!',
+        category: NotificationCategory.news,
         timestamp: now.subtract(const Duration(hours: 5)),
         isRead: true,
-        senderName: 'Hệ thống',
+        senderName: 'System',
       ),
       AppNotification(
         id: 'mock-4',
-        title: 'Tính năng mới: Đồng bộ hóa Lịch trình',
-        content: 'Chào mừng bạn đến với phiên bản Lumina v1.2! Giờ đây bạn đã có thể đồng bộ hóa lịch ngủ cá nhân trực tiếp vào thời gian biểu tự động.',
-        category: NotificationCategory.heThong,
+        title: 'New Feature: Sleep Schedule Sync',
+        content: 'Welcome to Lumina v1.2! You can now synchronize your personal sleep routines directly with your automated timeline.',
+        category: NotificationCategory.system,
         timestamp: now.subtract(const Duration(days: 1)),
         isRead: true,
-        senderName: 'Đội ngũ Phát triển',
-        actionLabel: 'Tìm hiểu thêm',
+        senderName: 'Dev Team',
+        actionLabel: 'Learn More',
       ),
       AppNotification(
         id: 'mock-5',
-        title: 'Nhắc nhở chuẩn bị đi ngủ 🌙',
-        content: 'Theo thiết lập của bạn, giờ đi ngủ lý tưởng sẽ bắt đầu sau 30 phút nữa. Hãy thư giãn mắt và chuẩn bị nghỉ ngơi.',
-        category: NotificationCategory.congViec,
+        title: 'Bedtime Reminder 🌙',
+        content: 'According to your preferences, your ideal bedtime starts in 30 minutes. Unwind your eyes and prepare to rest.',
+        category: NotificationCategory.task,
         timestamp: now.subtract(const Duration(days: 2)),
         isRead: true,
-        senderName: 'Lumina Sức khỏe',
+        senderName: 'Lumina Health',
       ),
     ];
+    notifyListeners();
+  }
+
+  void addLocalNotification({
+    required String title,
+    required String content,
+    required NotificationCategory category,
+    String senderName = 'Lumina Assistant',
+    String? actionLabel,
+  }) {
+    final now = DateTime.now();
+    final newNotif = AppNotification(
+      id: 'local-${now.millisecondsSinceEpoch}',
+      title: title,
+      content: content,
+      category: category,
+      timestamp: now,
+      isRead: false,
+      senderName: senderName,
+      actionLabel: actionLabel,
+    );
+    _notifications.insert(0, newNotif);
     notifyListeners();
   }
 

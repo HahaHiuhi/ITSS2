@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../models/task.dart';
 import '../models/schedule.dart';
+
 class TaskService extends ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
 
@@ -19,11 +19,13 @@ class TaskService extends ChangeNotifier {
   // =========================
 
   List<Task> get tasks => _tasks;
+
   List<Schedule> get schedules => _schedules;
   set schedules(List<Schedule> value) {
     _schedules = value;
     notifyListeners();
   }
+
   bool get isLoading => _isLoading;
 
   DateTime get selectedDate => _selectedDate;
@@ -46,10 +48,84 @@ class TaskService extends ChangeNotifier {
 
   List<Schedule> get sleepSchedules => _sleepSchedules;
 
-
   set sleepSchedules (List<Schedule> value) {
     _sleepSchedules = value;
     notifyListeners();
+  }
+
+  Set<String> get completedDates {
+    final dates = <String>{};
+    for (final task in _tasks) {
+      if (task.isComplete) {
+        dates.add(_formatDateStr(task.deadline));
+      }
+    }
+    return dates;
+  }
+
+  int get currentStreak {
+    final dates = completedDates;
+    if (dates.isEmpty) return 0;
+
+    final now = DateTime.now();
+    final todayStr = _formatDateStr(now);
+    final yesterdayStr = _formatDateStr(now.subtract(const Duration(days: 1)));
+
+    bool hasToday = dates.contains(todayStr);
+    bool hasYesterday = dates.contains(yesterdayStr);
+
+    if (!hasToday && !hasYesterday) {
+      return 0;
+    }
+
+    int streak = 0;
+    DateTime checkDate = hasToday ? now : now.subtract(const Duration(days: 1));
+
+    while (true) {
+      final checkStr = _formatDateStr(checkDate);
+      if (dates.contains(checkStr)) {
+        streak++;
+        checkDate = checkDate.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
+
+  int get longestStreak {
+    final datesStr = completedDates;
+    if (datesStr.isEmpty) return 0;
+
+    final dates = datesStr.map((d) => DateTime.parse(d)).toList();
+    // Sort ascending
+    dates.sort((a, b) => a.compareTo(b));
+
+    int maxStreak = 1;
+    int currentStreakCount = 1;
+
+    for (int i = 0; i < dates.length - 1; i++) {
+      final diff = dates[i + 1].difference(dates[i]).inDays;
+      if (diff == 1) {
+        currentStreakCount++;
+      } else if (diff > 1) {
+        if (currentStreakCount > maxStreak) {
+          maxStreak = currentStreakCount;
+        }
+        currentStreakCount = 1;
+      }
+    }
+
+    if (currentStreakCount > maxStreak) {
+      maxStreak = currentStreakCount;
+    }
+
+    return maxStreak;
+  }
+
+  String _formatDateStr(DateTime dt) {
+    return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}";
   }
 
   void _setLoading(bool value) {
@@ -79,9 +155,6 @@ class TaskService extends ChangeNotifier {
     print(_schedules);
     notifyListeners();
   }
-  // =========================
-  // FETCH TASKS
-  // =========================
 
   Future<void> fetchTasks({bool rebuild = false})async {
     final userId = currentUserId;
