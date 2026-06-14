@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sapp/services/supabase_service.dart';
+import 'package:sapp/services/auth_service.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -29,7 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final service = context.read<SupabaseService>();
+    final service = context.read<AuthService>();
     final messenger = ScaffoldMessenger.of(context);
 
     try {
@@ -64,7 +64,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final service = context.watch<SupabaseService>();
+    final service = context.watch<AuthService>();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -96,7 +96,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         passwordController: _passwordController,
                         isSignUp: _isSignUp,
                         isLoading: service.isLoading,
-                        isConfigured: service.isConfigured,
                         obscurePassword: _obscurePassword,
                         onToggleMode: _toggleMode,
                         onTogglePassword: () {
@@ -123,7 +122,6 @@ class _AuthScreenState extends State<AuthScreen> {
                       passwordController: _passwordController,
                       isSignUp: _isSignUp,
                       isLoading: service.isLoading,
-                      isConfigured: service.isConfigured,
                       obscurePassword: _obscurePassword,
                       onToggleMode: _toggleMode,
                       onTogglePassword: () {
@@ -248,12 +246,10 @@ class _AuthForm extends StatelessWidget {
     required this.passwordController,
     required this.isSignUp,
     required this.isLoading,
-    required this.isConfigured,
     required this.obscurePassword,
     required this.onToggleMode,
     required this.onTogglePassword,
-    required this.onSubmit,
-    this.onDemo,
+    required this.onSubmit
   });
 
   final GlobalKey<FormState> formKey;
@@ -262,12 +258,10 @@ class _AuthForm extends StatelessWidget {
   final TextEditingController passwordController;
   final bool isSignUp;
   final bool isLoading;
-  final bool isConfigured;
   final bool obscurePassword;
   final VoidCallback onToggleMode;
   final VoidCallback onTogglePassword;
   final VoidCallback onSubmit;
-  final VoidCallback? onDemo;
 
   @override
   Widget build(BuildContext context) {
@@ -363,16 +357,12 @@ class _AuthForm extends StatelessWidget {
                 ),
               ),
               validator: (value) {
-                if ((value ?? '').length <= 0) {
+                if ((value ?? '').isEmpty) {
                   return 'Please fill in password';
                 }
                 return null;
               },
             ),
-            if (!isConfigured) ...[
-              const SizedBox(height: 16),
-              _OfflineNotice(theme: theme),
-            ],
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: isLoading ? null : onSubmit,
@@ -390,17 +380,7 @@ class _AuthForm extends StatelessWidget {
                 minimumSize: const Size.fromHeight(52),
               ),
             ),
-            if (!isConfigured) ...[
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: isLoading ? null : onDemo,
-                icon: const Icon(Icons.play_circle_outline_rounded),
-                label: const Text('Continue demo'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
-              ),
-            ],
+
             const SizedBox(height: 20),
             TextButton(
               onPressed: isLoading ? null : onToggleMode,
@@ -417,40 +397,3 @@ class _AuthForm extends StatelessWidget {
   }
 }
 
-class _OfflineNotice extends StatelessWidget {
-  const _OfflineNotice({required this.theme});
-
-  final ThemeData theme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.surfaceContainer),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.info_outline_rounded,
-            size: 20,
-            color: theme.colorScheme.primary,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Supabase is not configured, so login uses local demo mode for now.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.secondary,
-                height: 1.35,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

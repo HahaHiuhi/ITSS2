@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sapp/models/task.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../../services/task_service.dart';
 class TaskTile extends StatelessWidget {
   final Task item;
   final VoidCallback? onTap;
+  final ValueChanged<bool>? onToggleComplete;
 
   const TaskTile({
     super.key,
     required this.item,
     this.onTap,
+    this.onToggleComplete,
   });
 
   @override
@@ -35,26 +39,24 @@ class TaskTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             /// CHECKBOX
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: item.isComplete
-                    ? const Color(0xff4B46E5)
-                    : Colors.transparent,
-                border: Border.all(
-                  color: const Color(0xff4B46E5),
-                  width: 2,
-                ),
+            IconButton(
+              icon: Icon(
+                item.isComplete
+                    ? Icons.check_circle
+                    : Icons.radio_button_unchecked,
+                color: const Color(0xff4B46E5),
+                size: 30,
               ),
-              child: item.isComplete
-                  ? const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 20,
-              )
-                  : null,
+              onPressed: () {
+                if (item.id != null) {
+                  final newStatus = !item.isComplete;
+                  if (onToggleComplete != null) {
+                    onToggleComplete!(newStatus);
+                  } else {
+                    context.read<TaskService>().toggleTaskCompletion(item.id!, newStatus);
+                  }
+                }
+              },
             ),
 
             const SizedBox(width: 16),
@@ -138,25 +140,85 @@ class TaskTile extends StatelessWidget {
 class TaskList extends StatelessWidget {
   final List<Task> items;
   final void Function(Task)? onTaskTap;
+  final void Function(Task, bool)? onToggleComplete;
 
   const TaskList({
     super.key,
     required this.items,
     this.onTaskTap,
+    this.onToggleComplete,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return TaskTile(
-          item: items[index],
-          onTap: onTaskTap == null
-              ? null
-              : () => onTaskTap!(items[index]),
-        );
-      },
+    final incomplete = items.where((t) => !t.isComplete).toList();
+    final completed = items.where((t) => t.isComplete).toList();
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      children: [
+        ...incomplete.map((task) => TaskTile(
+              key: ValueKey('incomplete_${task.id}'),
+              item: task,
+              onTap: onTaskTap == null ? null : () => onTaskTap!(task),
+              onToggleComplete: onToggleComplete == null
+                  ? null
+                  : (val) => onToggleComplete!(task, val),
+            )),
+        if (completed.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Divider(
+                    color: Color(0xFFE2E8F0),
+                    thickness: 1.5,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline_rounded,
+                        size: 18,
+                        color: Color(0xFF64748B),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'COMPLETED TASKS (${completed.length})',
+                        style: const TextStyle(
+                          color: Color(0xFF64748B),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Expanded(
+                  child: Divider(
+                    color: Color(0xFFE2E8F0),
+                    thickness: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...completed.map((task) => TaskTile(
+                key: ValueKey('completed_${task.id}'),
+                item: task,
+                onTap: onTaskTap == null ? null : () => onTaskTap!(task),
+                onToggleComplete: onToggleComplete == null
+                    ? null
+                    : (val) => onToggleComplete!(task, val),
+              )),
+        ],
+      ],
     );
   }
 }

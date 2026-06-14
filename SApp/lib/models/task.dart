@@ -1,67 +1,64 @@
 
 
-enum Priority {
-   Low,
-   Medium,
-   High,
- }
 class Task {
   final int? id;
   final String name;
+  final Duration t2c; // estimated duration
+  final Duration timeCompleted; // completed minutes
   final DateTime deadline;
-  final Priority priority;
   final List<String>? tags;
   final String? description;
-  final List<TaskProperty>? attributes;
   final bool isComplete;
   final List<TaskAttachment>? attachments;
 
-  Task( {
+  Task({
     this.id,
     required this.name,
+    required this.t2c,
+    required this.timeCompleted,
     required this.deadline,
-    required this.priority,
     this.tags,
     this.description,
-    this.attributes,
     this.isComplete = false,
     this.attachments,
   });
 
+  double get completionRate {
+    if (t2c == 0 ) {
+      return 0;
+    }
+
+    return timeCompleted.inMinutes / t2c.inMinutes;
+  }
+
+  bool get isUrgent {
+    final now = DateTime.now();
+
+    final isToday =
+        deadline.year == now.year &&
+            deadline.month == now.month &&
+            deadline.day == now.day;
+
+    return isToday && completionRate < 0.5;
+  }
+
   factory Task.fromJson(Map<String, dynamic> json) {
-    final rawAttributes = json['attributes'];
-
-    final attributes = rawAttributes is List
-        ? rawAttributes
-        .map((e) =>
-        TaskProperty.fromJson(
-          Map<String, dynamic>.from(e),
-        ))
-        .toList()
-        : <TaskProperty>[];
-
     return Task(
       id: json['id'] as int?,
       name: json['name'] as String,
+      t2c: Duration(minutes: json['time_to_complete'] ?? 0),
+      timeCompleted: Duration(minutes: json['time_completed'] ?? 0),
       deadline: DateTime.parse(json['deadline'] as String),
-      priority: Priority.values.firstWhere(
-            (e) =>
-        e.name.toLowerCase() ==
-            json['priority'].toString().toLowerCase(),
-        orElse: () => Priority.Medium,
-      ),
       tags: json['tags'] != null
           ? List<String>.from(json['tags'])
           : null,
       description: json['description'] as String?,
-      attributes: attributes,
       isComplete: json['is_completed'] as bool? ?? false,
       attachments: (json['attachments'] as List? ?? const [])
           .map(
-            (e) =>
-            TaskAttachment.fromJson(
-              Map<String, dynamic>.from(e),
-            ),
+            (e) => TaskAttachment.fromJson(
+          Map<String, dynamic>.from(e),
+        ),
       )
           .toList(),
     );
@@ -71,17 +68,14 @@ class Task {
     return {
       'id': id,
       'name': name,
+      'time_to_complete': t2c,
+      'time_completed': timeCompleted,
       'deadline': deadline.toIso8601String(),
-      'priority': priority.name,
       'tags': tags,
       'description': description,
-      'attributes': attributes
-          ?.map((attribute) => attribute.toJson())
-          .toList(),
       'is_completed': isComplete,
-      'attachments': attachments
-          ?.map((attachment) => attachment.toJson())
-          .toList(),
+      'attachments':
+      attachments?.map((e) => e.toJson()).toList(),
     };
   }
 }
@@ -123,32 +117,6 @@ class Task {
        'name': name,
        'url': url,
        'type': type.name,
-     };
-   }
- }
-
- class TaskProperty {
-   final String name;
-   final String value;
-
-   TaskProperty({
-     required this.name,
-     required this.value,
-   });
-
-   factory TaskProperty.fromJson(
-       Map<String, dynamic> json,
-       ) {
-     return TaskProperty(
-       name: json['name'] ?? '',
-       value: json['value'] ?? '',
-     );
-   }
-
-   Map<String, dynamic> toJson() {
-     return {
-       'name': name,
-       'value': value,
      };
    }
  }
