@@ -32,16 +32,22 @@ class Schedule {
 
 
   Event toEvent() {
-    return Event(
-        dateTimeRange: DateTimeRange(
-          start: startTime,
-          end: startTime.add(duration),
-        ),
-      title: title.toString(),
-      color: (task?.isUrgent ?? false)
-          ? Colors.red
-          : Colors.blue,
+    Color eventColor = Colors.blue;
+    if (task != null) {
+      eventColor = task!.isUrgent ? Colors.red : const Color(0xff4B46E5);
+    } else if (title == "Sleep") {
+      eventColor = const Color(0xFF64748B); // Slate grey for sleep
+    } else if (title.contains("☕") || title.toLowerCase().contains("break")) {
+      eventColor = const Color(0xFF10B981); // Emerald green for breaks
+    }
 
+    return Event(
+      dateTimeRange: DateTimeRange(
+        start: startTime,
+        end: startTime.add(duration),
+      ),
+      title: title.toString(),
+      color: eventColor,
     );
   }
 
@@ -136,6 +142,8 @@ class Scheduler {
     );
 
     final schedules = <Schedule>[];
+    const maxWorkBlock = Duration(minutes: 90);
+    const breakDuration = Duration(minutes: 15);
 
     for (final task in tasks) {
       Duration remaining = task.t2c - task.timeCompleted;
@@ -149,29 +157,54 @@ class Scheduler {
           continue;
         }
 
-        final available = slot.duration;
+        while (remaining > Duration.zero && slot.start.isBefore(slot.end)) {
+          final available = slot.end.difference(slot.start);
+          if (available <= Duration.zero) {
+            break;
+          }
 
-        if (available <= Duration.zero) {
-          continue;
+          final nextWorkChunk = remaining < maxWorkBlock ? remaining : maxWorkBlock;
+
+          if (available <= nextWorkChunk) {
+            schedules.add(
+              Schedule(
+                task: task,
+                title: task.name,
+                startTime: slot.start,
+                duration: available,
+              ),
+            );
+            slot.start = slot.end;
+            remaining -= available;
+          } else {
+            schedules.add(
+              Schedule(
+                task: task,
+                title: task.name,
+                startTime: slot.start,
+                duration: nextWorkChunk,
+              ),
+            );
+            slot.start = slot.start.add(nextWorkChunk);
+            remaining -= nextWorkChunk;
+
+            if (remaining > Duration.zero) {
+              final remainingSlotTime = slot.end.difference(slot.start);
+              if (remainingSlotTime > Duration.zero) {
+                final actualBreak = remainingSlotTime < breakDuration ? remainingSlotTime : breakDuration;
+                schedules.add(
+                  Schedule(
+                    task: null,
+                    title: 'Rest & Recharge ☕',
+                    startTime: slot.start,
+                    duration: actualBreak,
+                  ),
+                );
+                slot.start = slot.start.add(actualBreak);
+              }
+            }
+          }
         }
-
-        final used =
-        available < remaining
-            ? available
-            : remaining;
-
-        schedules.add(
-          Schedule(
-            task: task,
-            title: task.name,
-            startTime: slot.start,
-            duration: used,
-          ),
-        );
-
-        slot.start = slot.start.add(used);
-
-        remaining -= used;
       }
 
       if (remaining > Duration.zero) {

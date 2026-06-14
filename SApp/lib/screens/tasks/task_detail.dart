@@ -53,7 +53,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>  {
   bool get isEditMode => widget.task != null;
 
   double get completionRate {
-    if (_t2c == 0) return 0;
+    if (_t2c == Duration.zero) return 0;
     return (_timeCompleted.inMinutes / _t2c.inMinutes)
         .clamp(0.0, 1.0);
   }
