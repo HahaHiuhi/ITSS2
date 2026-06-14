@@ -24,7 +24,7 @@ class Task {
   });
 
   double get completionRate {
-    if (t2c == 0 ) {
+    if (t2c == Duration.zero) {
       return 0;
     }
 

@@ -72,7 +72,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
               return Container(
                 decoration: BoxDecoration(
-                  color: e.title == 'Sleep'? Colors.indigo : e.color,
+                  color: e.color,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 padding: const EdgeInsets.all(6),
