@@ -145,7 +145,7 @@ class StreakBoardScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Lịch Sử Hoàn Thành',
+                    'Completion History',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class StreakBoardScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Hoàn thành ít nhất 1 nhiệm vụ trong ngày để thắp sáng ô.',
+                    'Complete at least 1 task to light up the grid cell.',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade500,
@@ -307,32 +307,32 @@ class StreakBoardScreen extends StatelessWidget {
 
   String _getMotivationalMessage(int streak) {
     if (streak == 0) {
-      return 'Bắt đầu hoàn thành nhiệm vụ ngay hôm nay để thắp sáng ngọn lửa Streak đầu tiên của bạn! 🔥';
+      return 'Start completing tasks today to ignite your first Streak! 🔥';
     } else if (streak < 3) {
-      return 'Một khởi đầu tuyệt vời! Hãy duy trì thêm một ngày nữa để củng cố thói quen nhé. 👍';
+      return 'A great start! Keep it up for another day to build your habit. 👍';
     } else if (streak < 7) {
-      return 'Tuyệt vời! Bạn đang hình thành thói quen tốt rồi đấy. Tiếp tục phát huy nào! 🚀';
+      return 'Fantastic! You are building a solid habit. Keep pushing forward! 🚀';
     } else {
-      return 'Quá xuất sắc! Bạn là một chiến binh năng suất thực thụ. Ngọn lửa đang cháy rực rỡ! 🔥🎉';
+      return 'Outstanding! You are a productivity powerhouse. The fire is blazing! 🔥🎉';
     }
   }
 
   String _getWeekdayLabel(int weekday) {
     switch (weekday) {
       case 1:
-        return 'T2';
+        return 'Mon';
       case 2:
-        return 'T3';
+        return 'Tue';
       case 3:
-        return 'T4';
+        return 'Wed';
       case 4:
-        return 'T5';
+        return 'Thu';
       case 5:
-        return 'T6';
+        return 'Fri';
       case 6:
-        return 'T7';
+        return 'Sat';
       case 7:
-        return 'CN';
+        return 'Sun';
       default:
         return '';
     }

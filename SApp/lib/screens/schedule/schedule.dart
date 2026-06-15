@@ -60,6 +60,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ),
       header: CalendarHeader(),
       body: CalendarBody(
+          interaction: CalendarInteraction(
+            allowRescheduling: false,
+            allowResizing: false,
+            allowEventCreation: false,
+          ),
           multiDayTileComponents: TileComponents(
             tileBuilder: (event, tileRange) {
               final e = event as Event;
