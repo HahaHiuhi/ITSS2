@@ -183,67 +183,49 @@ class _ProfileFormState extends State<ProfileForm> {
                   return;
                 }
 
-                try {
-                  print('Updating profile: name=${_nameController.text}, workplace=${_workplaceController.text}, sleepHours=$_sleepHours, bedtime=${_bedtime.hour}:${_bedtime.minute}');
-                  await service.updateProfile(
-                    fullName:
-                    _nameController.text.trim(),
-                    workplace:
-                    _workplaceController.text.trim(),
-                    sleepHours: _sleepHours,
-                    bedtime:
-                    '${_bedtime.hour.toString().padLeft(2, '0')}:${_bedtime.minute.toString().padLeft(2, '0')}',
-                  );
+                await service.updateProfile(
+                  fullName:
+                  _nameController.text.trim(),
+                  workplace:
+                  _workplaceController.text.trim(),
+                  sleepHours: _sleepHours,
+                  bedtime:
+                  '${_bedtime.hour.toString().padLeft(2, '0')}:${_bedtime.minute.toString().padLeft(2, '0')}',
+                );
 
-                  if (context.mounted) {
-                    final taskService = context.read<TaskService>();
-                    final now = DateTime.now();
-                    final weekday = now.weekday;
-                    final startOfWeek = DateTime(
+                if (context.mounted) {
+                  final taskService = context.read<TaskService>();
+                  final now = DateTime.now();
+                  final weekday = now.weekday;
+                  final startOfWeek = DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                  ).subtract(Duration(days: weekday));
+
+                  taskService.sleepSchedules = generateSleepSchedules(
+                    startOfWeek,
+                    8,
+                    DateTime(
                       now.year,
                       now.month,
                       now.day,
-                    ).subtract(Duration(days: weekday));
+                      _bedtime.hour,
+                      _bedtime.minute,
+                    ),
+                    Duration(hours: _sleepHours),
+                  );
 
-                    print('Regenerating sleep schedules for startOfWeek: $startOfWeek');
-                    taskService.sleepSchedules = generateSleepSchedules(
-                      startOfWeek,
-                      8,
-                      DateTime(
-                        now.year,
-                        now.month,
-                        now.day,
-                        _bedtime.hour,
-                        _bedtime.minute,
-                      ),
-                      Duration(hours: _sleepHours),
-                    );
+                  await taskService.fetchTasks(rebuild: true);
 
-                    await taskService.fetchTasks(rebuild: true);
-
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Profile updated successfully',
-                        ),
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Profile updated',
                       ),
-                    );
-                  }
-                } catch (e, stackTrace) {
-                  print('Error updating profile: $e');
-                  print(stackTrace);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          'Error: $e',
-                        ),
-                      ),
-                    );
-                  }
+                    ),
+                  );
                 }
               },
               child: service.isLoading
