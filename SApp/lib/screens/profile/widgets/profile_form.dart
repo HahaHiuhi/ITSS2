@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/task_service.dart';
 import '../../../models/schedule.dart';
+import '../../../models/profile.dart';
 
 class ProfileForm extends StatefulWidget {
   const ProfileForm({super.key});
