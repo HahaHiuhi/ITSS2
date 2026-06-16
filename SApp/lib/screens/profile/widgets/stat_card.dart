@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../services/task_service.dart';
+
 class StatisticsCard extends StatelessWidget {
   const StatisticsCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final taskService = context.watch<TaskService>();
+    final totalTasks = taskService.tasks.length;
+    final completedTasks = taskService.tasks.where((t) => t.isComplete).length;
+
     return Card(
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment:
           MainAxisAlignment.spaceAround,
-          children: const [
+          children: [
             _StatItem(
               label: 'Tasks',
-              value: '0',
+              value: '$totalTasks',
             ),
             _StatItem(
               label: 'Done',
-              value: '0',
+              value: '$completedTasks',
             ),
           ],
         ),
