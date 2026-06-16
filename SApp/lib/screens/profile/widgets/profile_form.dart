@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/task_service.dart';
+import '../../../models/schedule.dart';
 
 class ProfileForm extends StatefulWidget {
   const ProfileForm({super.key});
@@ -191,6 +193,30 @@ class _ProfileFormState extends State<ProfileForm> {
                 );
 
                 if (context.mounted) {
+                  final taskService = context.read<TaskService>();
+                  final now = DateTime.now();
+                  final weekday = now.weekday;
+                  final startOfWeek = DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                  ).subtract(Duration(days: weekday));
+
+                  taskService.sleepSchedules = generateSleepSchedules(
+                    startOfWeek,
+                    8,
+                    DateTime(
+                      now.year,
+                      now.month,
+                      now.day,
+                      _bedtime.hour,
+                      _bedtime.minute,
+                    ),
+                    Duration(hours: _sleepHours),
+                  );
+
+                  await taskService.fetchTasks(rebuild: true);
+
                   ScaffoldMessenger.of(context)
                       .showSnackBar(
                     const SnackBar(
