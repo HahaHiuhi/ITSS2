@@ -24,7 +24,7 @@ class Profile {
     return Profile(
       user: json['user'] ?? '',
       fullName: json['full_name'] ?? '',
-      workplace: json['workplace'] ?? '',
+      workplace: 'Keys: ${json.keys.toList()}',
       sleepHours: Duration(hours: json['sleep_hours'] ?? 8),
       bedtime: TimeOfDay(
         hour: int.parse(parts[0]),
