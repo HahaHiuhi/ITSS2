@@ -124,16 +124,21 @@ class AuthService extends ChangeNotifier {
       throw Exception('User not logged in');
     }
 
-    await _client
+    final response = await _client
         .from('Profile')
         .update({
       'full_name': fullName,
       'workplace': workplace,
       'sleep_hours': sleepHours,
       'bedtime': bedtime,
-
     })
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .select();
+
+    print('Update profile response: $response');
+    if (response == null || (response as List).isEmpty) {
+      throw Exception('No profile record was updated for user: $userId');
+    }
 
     await fetchProfile();
   }
