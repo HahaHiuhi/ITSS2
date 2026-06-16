@@ -24,7 +24,7 @@ class _ProfileFormState extends State<ProfileForm> {
     minute: 0,
   );
 
-  bool _initialized = false;
+  Profile? _loadedProfile;
 
 
   @override
@@ -38,27 +38,28 @@ class _ProfileFormState extends State<ProfileForm> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (_initialized) return;
+    final service = Provider.of<AuthService>(context);
+    final profile = service.profile;
 
-    final service = context.read<AuthService>();
-
-    _nameController.text =
-        service.profile?.fullName ?? '';
-
-    _workplaceController.text =
-        service.profile?.workplace ?? '';
-
-    _sleepHours =
-        service.profile?.sleepHours.inHours ?? 8;
-
-    print(_sleepHours);
-    _bedtime = service.profile?.bedtime ??
-        const TimeOfDay(
-          hour: 23,
-          minute: 0,
-        );
-
-    _initialized = true;
+    if (profile != null && (
+        _loadedProfile == null ||
+        profile.fullName != _loadedProfile!.fullName ||
+        profile.workplace != _loadedProfile!.workplace ||
+        profile.sleepHours != _loadedProfile!.sleepHours ||
+        profile.bedtime != _loadedProfile!.bedtime
+    )) {
+      _nameController.text = profile.fullName;
+      _workplaceController.text = profile.workplace;
+      _sleepHours = profile.sleepHours.inHours;
+      _bedtime = profile.bedtime;
+      _loadedProfile = profile;
+    } else if (profile == null && _loadedProfile != null) {
+      _nameController.text = '';
+      _workplaceController.text = '';
+      _sleepHours = 8;
+      _bedtime = const TimeOfDay(hour: 23, minute: 0);
+      _loadedProfile = null;
+    }
   }
 
   @override
@@ -99,7 +100,7 @@ class _ProfileFormState extends State<ProfileForm> {
             const SizedBox(height: 24),
 
             DropdownButtonFormField<int>(
-              initialValue: _sleepHours,
+              value: _sleepHours,
               decoration: const InputDecoration(
                 labelText: 'Sleep Duration',
                 border: OutlineInputBorder(),
