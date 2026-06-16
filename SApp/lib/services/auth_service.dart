@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/profile.dart';
 
 
@@ -108,7 +109,19 @@ class AuthService extends ChangeNotifier {
     if (data == null) {
       _profile = null;
     } else {
-      _profile = Profile.fromJson(data);
+      final prefs = await SharedPreferences.getInstance();
+      final localSleep = prefs.getInt('${userId}_last_sleep_hours');
+      final localBedtime = prefs.getString('${userId}_last_bedtime');
+
+      final profileMap = Map<String, dynamic>.from(data);
+      if (localSleep != null) {
+        profileMap['sleep_hours'] = localSleep;
+      }
+      if (localBedtime != null) {
+        profileMap['bedtime'] = localBedtime;
+      }
+
+      _profile = Profile.fromJson(profileMap);
     }
 
     notifyListeners();
@@ -123,6 +136,10 @@ class AuthService extends ChangeNotifier {
     if (userId == null) {
       throw Exception('User not logged in');
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('${userId}_last_sleep_hours', sleepHours);
+    await prefs.setString('${userId}_last_bedtime', bedtime);
 
     await _client
         .from('Profile')
